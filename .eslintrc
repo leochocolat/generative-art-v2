@@ -1,0 +1,112 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "overrides": [],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "rules": {
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1,
+                "ArrayExpression": 1
+            }
+        ],
+        "comma-dangle": [
+            "error",
+            "always-multiline"
+        ],
+        "quote-props": 0,
+        "space-before-function-paren": [
+            "error",
+            {
+                "anonymous": "never",
+                "named": "never",
+                "asyncArrow": "never"
+            }
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "new-cap": 0,
+        "import/no-absolute-path": 0,
+        "no-unused-vars": 0,
+        "import/order": 0,
+        "unicorn/number-literal-case": 0,
+        "no-console": 0,
+        "curly": 0,
+        "no-empty": 0,
+        "eol-last": [
+            "error",
+            "always"
+        ],
+        "no-multiple-empty-lines": [
+            "error",
+            {
+                "max": 1,
+                "maxEOF": 0
+            }
+        ],
+        "array-bracket-spacing": [
+            "error",
+            "never"
+        ],
+        "array-bracket-newline": [
+            "error",
+            {
+                "multiline": true
+            }
+        ],
+        "array-element-newline": [
+            "error",
+            "consistent"
+        ],
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ],
+        "func-style": [
+            "error",
+            "declaration"
+        ],
+        "arrow-spacing": "error",
+        "keyword-spacing": [
+            "error",
+            {
+                "before": true
+            }
+        ],
+        "space-before-blocks": [
+            "error",
+            "always"
+        ],
+        "semi-spacing": "error",
+        "space-infix-ops": "error",
+        "space-in-parens": [
+            "error",
+            "never"
+        ],
+        "padded-blocks": [
+            "error",
+            "never"
+        ]
+    }
+}

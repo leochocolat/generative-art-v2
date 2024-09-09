@@ -1,0 +1,40 @@
+{
+  "name": "generative-art-v2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently --kill-others \"vite --host\" \"npm run debugger\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "debugger": "node debugger-server.js"
+  },
+  "devDependencies": {
+    "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.23.0",
+    "express": "^4.18.2",
+    "fs": "0.0.1-security",
+    "os": "^0.1.2",
+    "sass": "^1.54.8",
+    "serialport": "^12.0.0",
+    "util": "^0.12.5",
+    "vite": "^3.1.0",
+    "vite-plugin-glsl": "^0.3.0",
+    "vite-plugin-handlebars": "^1.6.0"
+  },
+  "dependencies": {
+    "@cosmicshelter/loaders": "^1.0.1",
+    "@cosmicshelter/resource-loader": "^1.0.0",
+    "@tweakpane/plugin-essentials": "^0.1.5",
+    "gsap": "^3.11.1",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "stats-js": "^1.0.1",
+    "three": "^0.154.0",
+    "tweakpane": "^3.1.10",
+    "tweakpane-plugin-media": "github:leochocolat/tweakpane-plugin-media"
+  }
+}

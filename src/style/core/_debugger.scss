@@ -1,0 +1,136 @@
+.tp-dfwv {
+    z-index: 100000;
+
+    position: fixed;
+
+    .tp-rotv {
+        top: 8px;
+        right: 8px;
+        bottom: auto;
+        left: auto;
+    }
+
+    .expand-drag-area {
+        position: absolute;
+        top: 0;
+        right: auto;
+        left: 0;
+
+        width: 10px;
+        height: 100%;
+
+        background-color: transparent;
+
+        cursor: col-resize;
+
+        &:before {
+            opacity: 0.2;
+
+            position: absolute;
+            top: 0;
+            right: auto;
+            left: 0;
+
+            width: 1px;
+            height: 100%;
+
+            background-color: rgba(120, 120, 120, 1);
+
+            transition: opacity 0.1s ease-in-out;
+
+            content: '';
+        }
+
+        &:hover {
+            &:before {
+                opacity: 1;
+            }
+        }
+    }
+
+    * {
+        touch-action: none;
+    }
+
+    &.right-top, &.top-right {
+        .tp-rotv {
+            top: 8px;
+            right: 8px;
+            bottom: auto;
+            left: auto;
+        }
+
+        .expand-drag-area {
+            right: auto;
+            left: 0;
+
+            &:before {
+                right: auto;
+                left: 0;
+            }
+        }
+    }
+
+    &.right-bottom, &.bottom-right {
+        .tp-rotv {
+            top: auto;
+            right: 8px;
+            bottom: 8px;
+            left: auto;
+        }
+
+        .expand-drag-area {
+            right: auto;
+            left: 0;
+
+            &:before {
+                right: auto;
+                left: 0;
+            }
+        }
+    }
+
+    &.left-top, &.top-left {
+        .tp-rotv {
+            top: 8px;
+            right: auto;
+            bottom: auto;
+            left: 8px;
+        }
+
+        .expand-drag-area {
+            right: 0;
+            left: auto;
+
+            &:before {
+                right: 0;
+                left: auto;
+            }
+        }
+    }
+
+    &.left-bottom, &.bottom-left {
+        .tp-rotv {
+            top: auto;
+            right: auto;
+            bottom: 8px;
+            left: 8px;
+        }
+
+        .expand-drag-area {
+            right: 0;
+            left: auto;
+
+            &:before {
+                right: 0;
+                left: auto;
+            }
+        }
+    }
+}
+
+.tp-rotv {
+    &::-webkit-scrollbar {
+        display: none; /* for Chrome, Safari, and Opera */
+    }
+}

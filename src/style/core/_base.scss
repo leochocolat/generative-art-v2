@@ -1,0 +1,32 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+
+    font-family: $font-primary;
+
+    font-size: base-font-size('small');
+
+    color: $color-white;
+
+    background-color: $color-black;
+
+    @include respond-to('medium') {
+        font-size: base-font-size('medium');
+    }
+
+    @include respond-to('large') {
+        font-size: base-font-size('large');
+    }
+
+    * {
+        box-sizing: border-box;
+
+        @include antialised();
+    }
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+}
