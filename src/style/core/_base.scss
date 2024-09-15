@@ -11,6 +11,8 @@ body {
 
     background-color: $color-black;
 
+    overflow: hidden;
+
     @include respond-to('medium') {
         font-size: base-font-size('medium');
     }

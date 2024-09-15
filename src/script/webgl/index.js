@@ -1,6 +1,6 @@
 // Vendor
 import gsap from 'gsap';
-import { WebGLRenderTarget, WebGLRenderer } from 'three';
+import { LinearSRGBColorSpace, NearestFilter, SRGBColorSpace, WebGLRenderTarget, WebGLRenderer } from 'three';
 import { GPUStatsPanel } from 'three/examples/jsm/utils/GPUStatsPanel.js';
 import Stats from 'stats-js';
 import bidello from 'webgl/vendor/bidello';
@@ -18,10 +18,10 @@ import WindowResizeObserver from 'utils/WindowResizeObserver';
 // Scenes
 import scenes from 'webgl/scenes';
 
-const BUFFER_WIDTH = 16;
-const BUFFER_HEIGHT = 16;
+const BUFFER_WIDTH = 32;
+const BUFFER_HEIGHT = 32;
 
-gsap.ticker.fps(10);
+gsap.ticker.fps(20);
 
 export default class WebGLApplication {
     constructor(options = {}) {
@@ -71,7 +71,7 @@ export default class WebGLApplication {
      * Private
      */
     _createChaussette() {
-        const serverUrl = 'ws://172.16.2.10:81/';
+        const serverUrl = 'ws:///172.16.2.10:1111/';
         const webSocket = new WebSocket(serverUrl);
 
         return webSocket;
@@ -82,7 +82,7 @@ export default class WebGLApplication {
         const height = 500;
         const canvas = document.createElement('canvas');
         canvas.context = canvas.getContext('2d');
-        document.body.appendChild(canvas);
+        // document.body.appendChild(canvas);
         canvas.width = width;
         canvas.height = height;
         canvas.style.position = 'fixed';
@@ -106,6 +106,7 @@ export default class WebGLApplication {
             antialias: true,
             transparent: false,
         });
+        
         return renderer;
     }
 
@@ -116,7 +117,10 @@ export default class WebGLApplication {
     }
 
     _createRenderTargetSmall() {
-        const renderTarget = new WebGLRenderTarget(BUFFER_WIDTH, BUFFER_HEIGHT);
+        const renderTarget = new WebGLRenderTarget(BUFFER_WIDTH, BUFFER_HEIGHT, {
+            minFilter: NearestFilter,
+            magFilter: NearestFilter,
+        });
         return renderTarget;
     }
 
@@ -163,7 +167,7 @@ export default class WebGLApplication {
      */
     _createStats() {
         const stats = new Stats();
-        document.body.appendChild(stats.dom);
+        // document.body.appendChild(stats.dom);
         return stats;
     }
 
@@ -183,6 +187,7 @@ export default class WebGLApplication {
     _registerBidelloGlobals() {
         bidello.registerGlobal('root', this);
         bidello.registerGlobal('app', this._app);
+        bidello.registerGlobal('chaussette', this._chaussette);
         bidello.registerGlobal('renderer', this._renderer);
         bidello.registerGlobal('debugger', this._debugger);
     }
@@ -245,56 +250,94 @@ export default class WebGLApplication {
             this._pixelBufferPrevious.set(this._pixelBufferCurrent);
             this._renderer.readRenderTargetPixels(this._renderTargetSmall, 0, 0, BUFFER_WIDTH, BUFFER_HEIGHT, this._pixelBufferCurrent);
 
-            const newData = [];
-
-            let ledIndex = 0;
-
-            for (let y = 0; y < BUFFER_HEIGHT; y++) {
-                for (let x = 0; x < BUFFER_WIDTH; x++) {
-                    const i = (y * BUFFER_HEIGHT + x) * 4;
-
-                    // current
-                    const r0 = this._pixelBufferCurrent[i];
-                    const g0 = this._pixelBufferCurrent[i + 1];
-                    const b0 = this._pixelBufferCurrent[i + 2];
-                    // const a0 = this._pixelBufferCurrent[i + 3];
-
-                    const r1 = this._pixelBufferPrevious[i];
-                    const g1 = this._pixelBufferPrevious[i + 1];
-                    const b1 = this._pixelBufferPrevious[i + 2];
-                    // const a1 = this._pixelBufferPrevious[i + 3];
-
-                    const threshold = 10;
-                    const rDiff = Math.abs(r1 - r0) > threshold;
-                    const gDiff = Math.abs(g1 - g0) > threshold;
-                    const bDiff = Math.abs(b1 - b0) > threshold;
-
-                    if (rDiff || gDiff || bDiff) {
-                        newData.push({ index: ledIndex, red: r0, green: g0, blue: b0 });
-                    }
-
-                    // Draw
-                    this._debugCanvas2D.context.fillStyle = `rgba(${r0}, ${g0}, ${b0}, 1)`;
-                    this._debugCanvas2D.context.fillRect(x * this._debugCanvas2D.width / BUFFER_WIDTH, y * this._debugCanvas2D.height / BUFFER_HEIGHT, this._debugCanvas2D.width / BUFFER_WIDTH, this._debugCanvas2D.height / BUFFER_HEIGHT);
-
-                    ledIndex++;
-                }
-            }
-
-            const data = new Uint8Array(newData.length * 4);
-
-            for (let i = 0; i < newData.length; i++) {
-                const item = newData[i];
-                data.set([item.index, item.red, item.green, item.blue], i * 4);
-            }
-                
-            if (data.length > 0 && this._chaussette.readyState === 1 && this._isSendAllowed) {
-                this._chaussette.send(data);
-            }
+            this._drawDebugBuffer();
+            // this._sendBuffer();
+            this._sendFilteredBuffer();
         }
         
         // if (this._composer) this._composer.render();
         this._statsGpuPanel.endQuery();
+    }
+
+    _flipBufferVertically(buffer, width, height) {
+        
+    }
+
+    _sendBuffer() {
+        this._chaussette.send(this._pixelBufferCurrent);   
+        console.log('Sending full buffer');
+    }
+
+    _sendFilteredBuffer() {
+        const newData = [];
+
+        let ledIndex = 0;
+
+        for (let y = 0; y < BUFFER_HEIGHT; y++) {
+            for (let x = 0; x < BUFFER_WIDTH; x++) {
+                const i = (y * BUFFER_HEIGHT + x) * 4;
+
+                // current
+                const r0 = this._pixelBufferCurrent[i];
+                const g0 = this._pixelBufferCurrent[i + 1];
+                const b0 = this._pixelBufferCurrent[i + 2];
+                // const a0 = this._pixelBufferCurrent[i + 3];
+
+                const r1 = this._pixelBufferPrevious[i];
+                const g1 = this._pixelBufferPrevious[i + 1];
+                const b1 = this._pixelBufferPrevious[i + 2];
+                // const a1 = this._pixelBufferPrevious[i + 3];
+
+                const threshold = 0;
+                const rDiff = Math.abs(r1 - r0) > threshold;
+                const gDiff = Math.abs(g1 - g0) > threshold;
+                const bDiff = Math.abs(b1 - b0) > threshold;
+
+                if (rDiff || gDiff || bDiff) {
+                    newData.push({ index: ledIndex, red: r0, green: g0, blue: b0 });
+                }
+
+                ledIndex++;
+            }
+        }
+        
+        // Length => 2 * RGB * newData.length;
+        const dataLength = newData.length * 5;
+        const data = new Uint8Array(dataLength);
+
+        for (let i = 0; i < newData.length; i++) {
+            const item = newData[i];
+
+            const indexHighByte = (item.index >> 8) & 0xFF;
+            const indexLowByte = item.index & 0xFF;
+
+            data.set([indexHighByte, indexLowByte, item.red, item.green, item.blue], i * 5);
+        }
+                
+        if (data.length > 0 && this._chaussette.readyState === 1) {
+            console.log('SEND', data);
+            this._chaussette.send(data);
+        }
+    }
+
+    _drawDebugBuffer() {
+        for (let y = 0; y < BUFFER_HEIGHT; y++) {
+            for (let x = 0; x < BUFFER_WIDTH; x++) {
+                const i = (y * BUFFER_HEIGHT + x) * 4;
+
+                const posX = x;
+                const posY = (BUFFER_HEIGHT - 1) - y;
+
+                // current
+                const r0 = this._pixelBufferCurrent[i];
+                const g0 = this._pixelBufferCurrent[i + 1];
+                const b0 = this._pixelBufferCurrent[i + 2];
+
+                // Draw
+                this._debugCanvas2D.context.fillStyle = `rgba(${r0}, ${g0}, ${b0}, 1)`;
+                this._debugCanvas2D.context.fillRect(posX * this._debugCanvas2D.width / BUFFER_WIDTH, posY * this._debugCanvas2D.height / BUFFER_HEIGHT, this._debugCanvas2D.width / BUFFER_WIDTH, this._debugCanvas2D.height / BUFFER_HEIGHT);
+            }
+        }
     }
 
     /**
