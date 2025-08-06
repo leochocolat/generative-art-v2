@@ -18,8 +18,8 @@ import WindowResizeObserver from 'utils/WindowResizeObserver';
 // Scenes
 import scenes from 'webgl/scenes';
 
-const BUFFER_WIDTH = 32;
-const BUFFER_HEIGHT = 32;
+const BUFFER_WIDTH = 16;
+const BUFFER_HEIGHT = 16;
 
 gsap.ticker.fps(20);
 
@@ -71,7 +71,7 @@ export default class WebGLApplication {
      * Private
      */
     _createChaussette() {
-        const serverUrl = 'ws:///172.16.2.10:1111/';
+        const serverUrl = 'ws:///192.168.1.46:1111/';
         const webSocket = new WebSocket(serverUrl);
 
         return webSocket;

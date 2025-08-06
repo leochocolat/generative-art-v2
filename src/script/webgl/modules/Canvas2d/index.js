@@ -6,8 +6,8 @@ import { CanvasTexture, LinearFilter, NearestFilter } from 'three';
 const WIDTH = 160;
 const HEIGHT = 160;
 
-const GRID_WIDTH = 32;
-const GRID_HEIGHT = 32;
+const GRID_WIDTH = 16;
+const GRID_HEIGHT = 16;
 
 export default class Canvas2d {
     constructor(options = {}) {

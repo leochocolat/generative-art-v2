@@ -52,9 +52,9 @@ export default class ComponentBox extends component(Object3D) {
      * Update
      */
     onUpdate({ time, deltaTime, frame }) {
-        // this._mesh.rotation.x = time;
-        // this._mesh.rotation.y = time;
-        // this._mesh.rotation.z = time;
+        this._mesh.rotation.x = time;
+        this._mesh.rotation.y = time;
+        this._mesh.rotation.z = time;
     }
 
     /**
